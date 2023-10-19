@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VR Experiment</title>
+    <style>
+        /* Style for the webcam frame */
+        #webcam-overlay {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            width: 100px; /* Set the desired width */
+            height: 100px; /* Set the desired height */
+            border: 1px solid #000;
+            z-index: 9999; /* Ensure the webcam frame is on top of everything */
+            overflow: hidden; /* Hide any excess video outside the container */
+        }
+
+        /* Style for the blinking text */
+        #blink-text {
+            position: fixed;
+            top: 60px;
+            left: 120px; /* Adjust the left position as needed */
+            font-size: 12px;
+            color: #FF0000; /* Red color for visibility */
+            animation: blink 1s infinite; /* CSS animation for blinking */
+            z-index: 10000; /* Ensure the text is on top of everything */
+        }
+
+        /* Style for the countdown timer */
+        #countdown {
+            position: fixed;
+            top: 70px; /* Adjust the top position as needed */
+            left: 120px; /* Adjust the left position as needed */
+            font-size: 16px;
+            color: #000;
+            z-index: 10000; /* Ensure the timer is on top of everything */
+        }
+
+        /* Style for the iframe */
+        #iframe {
+            width: 100%;
+            height: 100vh; /* 100% of the viewport height */
+            border: none;
+        }
+
+        /* Keyframes animation for blinking text */
+        @keyframes blink {
+            0% {
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Container for the webcam frame -->
+    <div id="webcam-overlay">
+        <video id="webcam" autoplay></video>
+    </div>
+
+    <!-- Container for the iframe -->
+    <iframe id="iframe" src="https://www.pravno-informacioni-sistem.rs/SlGlasnikPortal/viewdoc?uuid=ed2806e8-411a-4f05-ad39-876594ab5dbf"></iframe>
+
+    <!-- Blinking text -->
+    <div id="blink-text">Saving only eye tracking data.</div>
+
+    <!-- Countdown timer -->
+    <div id="countdown">Data belongs to University of Nis. Timer: <span id="timer">240</span>s</div>
+
+    <script>
+        // Get the webcam feed and display it in the webcam overlay
+        async function startWebcam() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const webcam = document.getElementById('webcam');
+                webcam.srcObject = stream;
+
+                // Adjust the size of the video to fit the container while maintaining aspect ratio
+                webcam.onloadedmetadata = () => {
+                    const aspectRatio = webcam.videoWidth / webcam.videoHeight;
+                    const container = document.getElementById('webcam-overlay');
+                    const containerWidth = container.offsetWidth;
+
+                    // Calculate the new height based on the aspect ratio
+                    const newHeight = containerWidth / aspectRatio;
+
+                    // Apply the new dimensions to the video element
+                    webcam.width = containerWidth;
+                    webcam.height = newHeight;
+                };
+            } catch (error) {
+                console.error('Error accessing webcam:', error);
+            }
+        }
+
+        // Countdown timer
+        function startCountdown(duration) {
+            const timerElement = document.getElementById('timer');
+            let remainingTime = duration;
+
+            const countdownInterval = setInterval(() => {
+                if (remainingTime <= 0) {
+                    clearInterval(countdownInterval);
+                    timerElement.textContent = '0';
+                } else {
+                    timerElement.textContent = remainingTime;
+                    remainingTime--;
+                }
+            }, 1000);
+        }
+
+        // Call the startWebcam and startCountdown functions when the page loads
+        window.addEventListener('load', () => {
+            startWebcam();
+            startCountdown(240); // Start the countdown from 240 seconds
+        });
+    </script>
+</body>
+</html>
+
+    <!--    https://www.pravno-informacioni-sistem.rs/SlGlasnikPortal/viewdoc?uuid=ed2806e8-411a-4f05-ad39-876594ab5dbf"></iframe>
+     -->
+  
